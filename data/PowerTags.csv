@@ -1,0 +1,24 @@
+Name;Type;RF ID;Circuit;Fuse;Descirption;Mounted;Isuues
+PT01;LV434022;;;;Main;;
+PT02;A9MEM1580;9A75;B1;B1;Fryer 1+6, Fryer heater;;
+PT03;A9MEM1580;987C;B3;B3;Fryer 9+16, Chiller, Blender;;
+PT04;A9MEM1581;9A26;B4;B4;BOP Lines, Supply Line, Combo;;
+PT05;A9MEM1570;;B8;B8;Guaranteed power, IT;;
+PT06;A9MEM1570;6C91;B9a;B9a;Indoor Lighting;;
+PT07;A9MEM1570;6C6D;B9b;B9b;External lighting;;
+PT08;A9MEM1580/ LV434020;9A76;B10a;B10a;RT Kitchen (1N/1W);;
+PT09;A9MEM1580/ LV434019;9A46;B10b;B10b;RT Lobby (2N/R);;
+PT10;A9MEM1580;9865;B10c;B10c;HVAC;;
+PT11;A9MEM1573;7627;B2;F7;Grill 1;;
+PT12;A9MEM1573;761F;B2;F8;Grill 2;;
+PT13;A9MEM1573;7624;B7a;F47;Cooler compressor;;
+PT14;A9MEM1573;761C;B7a;F48;Freezer compressor;;
+PT15;A9MEM1560;3F69;B7b;F51;Hand-held freezer Grill 1;;
+PT16;A9MEM1560;5,00E+37;B7b;F52;Hand-held freezer Grill 2;;
+PT17;A9MEM1560;5E5A;B7b;F53;Fries distributor;;
+PT18;A9MEM1560;64EC;B7b;F54;Vertcial Freezer Positive;;
+PT19;A9MEM1560;4039;B7b;F55;Vertcial Freezer Negative;;
+PT20;A9MEM1573;761E;B10c;F141;Kitchen Hood;;
+PT21;A9MEM1560;3F90;B11;F163;Refrigerator;;
+PT22;A9MEM1560;6768;B11;F164;Refrigerator;;
+PT23;A9MEM1560;6767;B11;F168;Refrigerated display case;;
