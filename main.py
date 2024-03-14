@@ -10,20 +10,20 @@ from selenium.webdriver.support.ui import Select
 from file_operations import File
 import time
 
-# Konfiguracja formattera
+# Formatter configuration
 formatter = logging.Formatter('%%(name)s - %(levelname)s - %(message)s')
 
-# Konfiguracja FileHandler
+# FileHandler configurationgi
 file_handler = logging.FileHandler('app.log')
 file_handler.setFormatter(formatter)
 
-# Konfiguracja StreamHandler
+# StreamHandler configuration
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 
-# Konfiguracja loggera
+# Logger configuration
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)  # Ustawienie najniższego poziomu logowania
+logger.setLevel(logging.INFO)
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
