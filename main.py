@@ -2,6 +2,7 @@ import getpass
 import logging
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -9,8 +10,23 @@ from selenium.webdriver.support.ui import Select
 from file_operations import File
 import time
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Konfiguracja formattera
+formatter = logging.Formatter('%%(name)s - %(levelname)s - %(message)s')
+
+# Konfiguracja FileHandler
+file_handler = logging.FileHandler('app.log')
+file_handler.setFormatter(formatter)
+
+# Konfiguracja StreamHandler
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+
+# Konfiguracja loggera
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)  # Ustawienie najniższego poziomu logowania
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
+
 
 # JavaScript Script
 script = """
@@ -104,14 +120,17 @@ def search_for_new_powertags(driver: webdriver.Chrome) -> None:
     :param driver: The WebDriver instance used for interacting with the webpage.
     """
     # Navigations and interactions for finding new PowerTags
-    driver.find_element(By.XPATH, '//a[@routerlink="/settings"]').click()
-    driver.find_element(By.XPATH, '//app-card-menu-dumb[@cardtitle="Wireless Devices"]').click()
-    driver.find_element(By.XPATH, '//se-list-item[2]').click()  # Simplified XPATH
-    driver.find_element(By.XPATH, '//*[@id="switchbutton"]').click()
-    logging.info("Searching for new PowerTags...")
-    WebDriverWait(driver, 120, 1).until_not(lambda d: d.find_element(By.XPATH,
-                                                                     '//*[@id="ZigBeePermitJoin.Information_elements.disco_status"]').text == "Searching")
-    logging.info("Search completed.")
+    try:
+        driver.find_element(By.XPATH, '//a[@routerlink="/settings"]').click()
+        driver.find_element(By.XPATH, '//app-card-menu-dumb[@cardtitle="Wireless Devices"]').click()
+        driver.find_element(By.XPATH, '//se-list-item[2]').click()  # Simplified XPATH
+        driver.find_element(By.XPATH, '//*[@id="switchbutton"]').click()
+        logger.info("Searching for new PowerTags...")
+        WebDriverWait(driver, 120, 1).until_not(lambda d: d.find_element(By.XPATH,
+                                                                         '//*[@id="ZigBeePermitJoin.Information_elements.disco_status"]').text == "Searching")
+        logger.info("Search completed.")
+    except NoSuchElementException:
+        logger.error("Error occurred while searching for new PowerTags.")
 
 
 def configure_powertags(driver: webdriver.Chrome, file_path: str) -> None:
@@ -171,7 +190,6 @@ def configure_powertags(driver: webdriver.Chrome, file_path: str) -> None:
                 else:
                     if reply == -1:
                         # Changing the orientation of the current flow
-                        # Correct use of WebDriverWait with presence_of_element_located
                         select_element = WebDriverWait(driver, 10).until(
                             EC.presence_of_element_located((By.ID, "ElectricalCharacteristics.CurrentFlow"))
                         )
@@ -247,7 +265,9 @@ def check_values(driver: webdriver.Chrome) -> int:
 def is_float(string: str) -> bool:
     """
     Check if the given string can be converted to float.
-    :param string: A string to check if conversion to float is possible.
+
+    :param string: String to check.
+    :return: Boolean information whether the string is a floating point number.
     """
     try:
         float(string)
@@ -256,28 +276,34 @@ def is_float(string: str) -> bool:
         return False
 
 
+def configure_start(url: str, password: str, file_path: str) -> WebDriver:
+    """
+    Starts webdriver and runs functions to write and read data on the web page.
+
+    :param url: URL of the page to open.
+    :param password: Password to log in to the site.
+    :param file_path: Path to the CSV file.
+    """
+    driver = None
+    driver = initialize_driver()
+    navigate_to_url(driver, url)
+    handle_security_warning(driver)
+    login_to_site(driver, password)
+    search_for_new_powertags(driver)
+    configure_powertags(driver, file_path)
+
+    return driver
+
+
 def main():
     """
     Main function to run the automation script.
     """
-    driver = None
-    try:
-        driver_path = 'C:/Users/tksze/Downloads/chromedriver.exe'  # Update as per your chromedriver path
-        file_path = 'D:/Pulpit/PowerTags.csv'
-        url = input("Specify URL: ")
-        password = input("Password: ")
+    from gui import Application
+    file_path = 'data/PowerTags.csv'
 
-        driver = initialize_driver()
-        navigate_to_url(driver, url)
-        handle_security_warning(driver)
-        login_to_site(driver, password)
-        search_for_new_powertags(driver)
-        configure_powertags(driver, file_path)
-    finally:
-        # Ensure the driver quits even if there is an error
-        if driver:
-            if input("Do you want to end? Enter 'Yes' to close the browser: ").lower() == 'yes':
-                driver.quit()
+    app = Application(file_path)
+    app.mainloop()
 
 
 if __name__ == "__main__":
